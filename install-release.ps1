@@ -142,7 +142,10 @@ try {
 
   $AllowOutput = (& $LobsterAiBin $OpenClawEntry config get plugins.allow --json 2>$null | Out-String).Trim()
   $AllowValues = @()
-  if ($LASTEXITCODE -eq 0 -and $AllowOutput) { $AllowValues = @($AllowOutput | ConvertFrom-Json) }
+  if ($LASTEXITCODE -eq 0 -and $AllowOutput) {
+    $ParsedAllowValues = $AllowOutput | ConvertFrom-Json
+    foreach ($AllowedPlugin in $ParsedAllowValues) { $AllowValues += [string]$AllowedPlugin }
+  }
   if ($AllowValues -notcontains $PluginId) { $AllowValues += $PluginId }
   $HostPatch = @{
     plugins = @{
