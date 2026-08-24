@@ -113,24 +113,51 @@ try {
 
   $env:ELECTRON_RUN_AS_NODE = "1"
   $env:OPENCLAW_STATE_DIR = $StateDir
+  function ConvertTo-NativeArgument {
+    param([AllowEmptyString()][string]$Value)
+    if ($Value -and $Value -notmatch '[\s"]') { return $Value }
+
+    $Builder = New-Object System.Text.StringBuilder
+    [void]$Builder.Append([char]34)
+    $Backslashes = 0
+    foreach ($Character in $Value.ToCharArray()) {
+      if ($Character -eq [char]92) {
+        $Backslashes += 1
+      } elseif ($Character -eq [char]34) {
+        [void]$Builder.Append([char]92, ($Backslashes * 2) + 1)
+        [void]$Builder.Append([char]34)
+        $Backslashes = 0
+      } else {
+        [void]$Builder.Append([char]92, $Backslashes)
+        [void]$Builder.Append($Character)
+        $Backslashes = 0
+      }
+    }
+    [void]$Builder.Append([char]92, $Backslashes * 2)
+    [void]$Builder.Append([char]34)
+    return $Builder.ToString()
+  }
   function Invoke-OpenClaw {
     param([string[]]$Arguments)
-    $PreviousErrorActionPreference = $ErrorActionPreference
-    $ExitCode = 0
-    $CommandOutput = @()
+    $NativeArguments = @($OpenClawEntry) + @($Arguments)
+    $ArgumentLine = ($NativeArguments | ForEach-Object { ConvertTo-NativeArgument -Value $_ }) -join " "
+    $StartInfo = New-Object System.Diagnostics.ProcessStartInfo
+    $StartInfo.FileName = $LobsterAiBin
+    $StartInfo.Arguments = $ArgumentLine
+    $StartInfo.UseShellExecute = $false
+    $StartInfo.RedirectStandardOutput = $true
+    $StartInfo.CreateNoWindow = $true
+    $Process = New-Object System.Diagnostics.Process
+    $Process.StartInfo = $StartInfo
     try {
-      $ErrorActionPreference = "Continue"
-      # PowerShell does not wait for Windows GUI-subsystem executables unless
-      # their output participates in the pipeline. LobsterAI.exe is such an
-      # executable even when ELECTRON_RUN_AS_NODE is enabled. Consume its
-      # output before reading the exit code so temporary install inputs remain
-      # available until OpenClaw has actually finished using them.
-      $CommandOutput = @(& $LobsterAiBin $OpenClawEntry @Arguments)
-      $ExitCode = $LASTEXITCODE
+      if (-not $Process.Start()) { throw "Failed to start the LobsterAI OpenClaw runtime." }
+      $CommandOutput = $Process.StandardOutput.ReadToEnd()
+      $Process.WaitForExit()
+      $ExitCode = $Process.ExitCode
     } finally {
-      $ErrorActionPreference = $PreviousErrorActionPreference
+      $Process.Dispose()
     }
-    if ($CommandOutput.Count -gt 0) { $CommandOutput | Write-Output }
+    if ($CommandOutput) { Write-Output $CommandOutput.TrimEnd() }
     if ($ExitCode -ne 0) { throw "OpenClaw command failed with exit code $ExitCode." }
   }
   function Invoke-OpenClawPatch {
