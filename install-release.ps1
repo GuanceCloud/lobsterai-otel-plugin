@@ -125,15 +125,24 @@ try {
 
   Write-Host "Installing lobsterai-otel-plugin v$($PackageMetadata.version) into the selected LobsterAI OpenClaw state directory."
   Invoke-OpenClaw -Arguments @("plugins", "install", $ArchivePath, "--force")
-  Invoke-OpenClaw -Arguments @("config", "set", "plugins.entries.$PluginId.enabled", "true", "--strict-json") | Out-Null
-  Invoke-OpenClaw -Arguments @("config", "set", "plugins.entries.$PluginId.hooks", '{"allowConversationAccess":true,"allowPromptInjection":false}', "--strict-json", "--merge") | Out-Null
 
   $AllowOutput = (& $LobsterAiBin $OpenClawEntry config get plugins.allow --json 2>$null | Out-String).Trim()
   $AllowValues = @()
   if ($LASTEXITCODE -eq 0 -and $AllowOutput) { $AllowValues = @($AllowOutput | ConvertFrom-Json) }
   if ($AllowValues -notcontains $PluginId) { $AllowValues += $PluginId }
-  $AllowJson = ConvertTo-Json -Compress -InputObject @($AllowValues)
-  Invoke-OpenClaw -Arguments @("config", "set", "plugins.allow", $AllowJson, "--strict-json") | Out-Null
+  $HostPatch = @{
+    plugins = @{
+      allow = @($AllowValues)
+      entries = @{
+        $PluginId = @{
+          enabled = $true
+          hooks = @{ allowConversationAccess = $true; allowPromptInjection = $false }
+        }
+      }
+    }
+  }
+  $HostPatchJson = ConvertTo-Json -Compress -Depth 20 -InputObject $HostPatch
+  Invoke-OpenClaw -Arguments @("config", "patch", "--stdin") -StandardInput $HostPatchJson | Out-Null
   Invoke-OpenClaw -Arguments @("plugins", "inspect", $PluginId, "--json") | Out-Null
 
   if (-not $NoConfig) {
