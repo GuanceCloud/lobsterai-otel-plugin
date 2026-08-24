@@ -121,8 +121,25 @@ public static class LobsterAiGuiShim
     }
 }
 '@
-  Add-Type -TypeDefinition $GuiShimSource -Language CSharp `
-    -OutputAssembly $FakeBin -OutputType WindowsApplication
+  if ($PSVersionTable.PSEdition -eq "Core") {
+    $GuiShimSourcePath = Join-Path $Sandbox "LobsterAiGuiShim.cs"
+    $GuiShimCompilerPath = Join-Path $Sandbox "compile-gui-shim.ps1"
+    [IO.File]::WriteAllText($GuiShimSourcePath, $GuiShimSource, [System.Text.UTF8Encoding]::new($false))
+    $GuiShimCompiler = @'
+param([string]$SourcePath, [string]$OutputPath)
+$ErrorActionPreference = "Stop"
+Add-Type -TypeDefinition (Get-Content -LiteralPath $SourcePath -Raw) -Language CSharp `
+  -OutputAssembly $OutputPath -OutputType WindowsApplication
+'@
+    [IO.File]::WriteAllText($GuiShimCompilerPath, $GuiShimCompiler, [System.Text.UTF8Encoding]::new($false))
+    $WindowsPowerShell = Join-Path $env:SystemRoot "System32\WindowsPowerShell\v1.0\powershell.exe"
+    & $WindowsPowerShell -NoProfile -NonInteractive -ExecutionPolicy Bypass `
+      -File $GuiShimCompilerPath -SourcePath $GuiShimSourcePath -OutputPath $FakeBin
+    if ($LASTEXITCODE -ne 0) { throw "Windows GUI shim compilation failed with exit code $LASTEXITCODE." }
+  } else {
+    Add-Type -TypeDefinition $GuiShimSource -Language CSharp `
+      -OutputAssembly $FakeBin -OutputType WindowsApplication
+  }
   $Entry = $Helper
 
   $Initial = @{
