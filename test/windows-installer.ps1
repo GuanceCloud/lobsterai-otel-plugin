@@ -19,7 +19,7 @@ try {
   $env:APPDATA = Join-Path $HomeDir "AppData\Roaming"
   $env:LOCALAPPDATA = Join-Path $HomeDir "AppData\Local"
 
-  $PackJson = npm pack $Root --pack-destination $Sandbox --json | Out-String
+  $PackJson = & npm.cmd pack $Root --pack-destination $Sandbox --json | Out-String
   if ($LASTEXITCODE -ne 0) { throw "npm pack failed" }
   $PackedName = (($PackJson | ConvertFrom-Json)[0]).filename
   $Archive = Join-Path $Sandbox "lobsterai-otel-plugin-v0.1.0.tar.gz"
