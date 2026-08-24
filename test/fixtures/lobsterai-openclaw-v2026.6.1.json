@@ -1,0 +1,15 @@
+{
+  "fixture": "synthetic-no-user-data",
+  "lobsteraiVersion": "2026.8.19",
+  "openclawVersion": "2026.6.1",
+  "openclawCommit": "2e08f0f4221f522b60423ed6ffd83427942b28de",
+  "events": [
+    { "hook": "before_agent_run", "runId": "fixture-run-1", "sessionId": "fixture-session-1", "prompt": "Inspect the synthetic project" },
+    { "hook": "model_call_started", "runId": "fixture-run-1", "callId": "fixture-model-1", "provider": "example", "model": "model-test" },
+    { "hook": "before_tool_call", "runId": "fixture-run-1", "toolCallId": "fixture-tool-1", "toolName": "read", "params": { "path": "/fixture/.agents/skills/demo/SKILL.md" } },
+    { "hook": "after_tool_call", "runId": "fixture-run-1", "toolCallId": "fixture-tool-1", "toolName": "read", "durationMs": 25, "result": { "text": "synthetic result" } },
+    { "hook": "model_call_ended", "runId": "fixture-run-1", "callId": "fixture-model-1", "durationMs": 80, "outcome": "completed" },
+    { "hook": "llm_output", "runId": "fixture-run-1", "provider": "example", "model": "model-test", "assistantTexts": ["Synthetic answer"], "usage": { "input": 10, "output": 2, "cacheRead": 3 } },
+    { "hook": "agent_end", "runId": "fixture-run-1", "success": true }
+  ]
+}

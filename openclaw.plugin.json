@@ -1,0 +1,88 @@
+{
+  "id": "lobsterai-otel-plugin",
+  "name": "LobsterAI OpenTelemetry",
+  "description": "Export terminal LobsterAI agent turns as GTrace-compatible OTLP traces and metrics.",
+  "activation": {
+    "onStartup": true
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "enabled": {
+        "type": "boolean",
+        "default": false
+      },
+      "profile": {
+        "type": "string",
+        "enum": ["gtrace", "otlp"],
+        "default": "gtrace"
+      },
+      "endpoint": {
+        "type": "string"
+      },
+      "tracesUrl": {
+        "type": "string"
+      },
+      "metricsUrl": {
+        "type": "string"
+      },
+      "tracePath": {
+        "type": "string"
+      },
+      "metricsPath": {
+        "type": "string"
+      },
+      "xToken": {
+        "type": "string"
+      },
+      "headers": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string"
+        }
+      },
+      "captureContent": {
+        "type": "string",
+        "enum": ["none", "preview", "full"],
+        "default": "preview"
+      },
+      "maxChars": {
+        "type": "number",
+        "minimum": 128,
+        "maximum": 100000,
+        "default": 2000
+      },
+      "timeoutMs": {
+        "type": "number",
+        "minimum": 1000,
+        "maximum": 60000,
+        "default": 25000
+      },
+      "debug": {
+        "type": "boolean",
+        "default": false
+      },
+      "resourceAttributes": {
+        "type": "object",
+        "additionalProperties": {
+          "type": ["string", "number", "boolean"]
+        }
+      },
+      "internalRequestPolicy": {
+        "type": "string",
+        "enum": ["drop", "export"],
+        "default": "drop"
+      }
+    }
+  },
+  "uiHints": {
+    "enabled": { "label": "Enabled" },
+    "profile": { "label": "Receiver profile" },
+    "endpoint": { "label": "OTLP endpoint", "placeholder": "https://llm-openway.guance.com" },
+    "xToken": { "label": "GTrace X-Token", "sensitive": true },
+    "captureContent": { "label": "Content capture" },
+    "resourceAttributes": { "label": "Resource attributes" },
+    "debug": { "label": "Debug logging" }
+  }
+}

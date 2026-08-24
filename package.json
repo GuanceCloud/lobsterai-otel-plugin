@@ -1,0 +1,45 @@
+{
+  "name": "lobsterai-otel-plugin",
+  "version": "0.1.0",
+  "description": "GTrace-compatible OpenTelemetry traces and metrics for LobsterAI.",
+  "type": "module",
+  "private": false,
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GuanceCloud/lobsterai-otel-plugin.git"
+  },
+  "bugs": "https://github.com/GuanceCloud/lobsterai-otel-plugin/issues",
+  "homepage": "https://github.com/GuanceCloud/lobsterai-otel-plugin#readme",
+  "main": "index.js",
+  "exports": "./index.js",
+  "files": [
+    "index.js",
+    "src",
+    "scripts",
+    "openclaw.plugin.json",
+    "README.md",
+    "README_ZH.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "check": "node scripts/check.mjs",
+    "test": "node --test test/*.test.js",
+    "pack:release": "node scripts/build-release.mjs"
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "openclaw": {
+    "extensions": [
+      "./index.js"
+    ]
+  },
+  "dependencies": {
+    "@opentelemetry/api": "1.9.0",
+    "@opentelemetry/otlp-transformer": "0.221.0",
+    "@opentelemetry/resources": "2.10.0",
+    "@opentelemetry/sdk-metrics": "2.10.0"
+  }
+}
