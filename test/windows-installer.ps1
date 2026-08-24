@@ -54,7 +54,8 @@ try {
     }
   }
   $ConfigPath = Join-Path $StateDir "fake-openclaw.json"
-  $Initial | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath $ConfigPath -Encoding UTF8
+  $InitialJson = $Initial | ConvertTo-Json -Depth 20
+  [IO.File]::WriteAllText($ConfigPath, $InitialJson, [System.Text.UTF8Encoding]::new($false))
 
   $Output = & (Join-Path $Root "install-release.ps1") -Version v0.1.0 -Type gtrace `
     -Endpoint "https://new.invalid" -XToken "synthetic-windows-token" `
