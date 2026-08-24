@@ -1,4 +1,3 @@
-[CmdletBinding()]
 param(
   [string]$Version,
   [ValidateSet("gtrace", "otlp")][string]$Type,
