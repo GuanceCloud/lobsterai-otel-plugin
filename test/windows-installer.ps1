@@ -12,10 +12,8 @@ try {
   [IO.Directory]::CreateDirectory($Sandbox) | Out-Null
   $HomeDir = Join-Path $Sandbox "home"
   $StateDir = Join-Path $Sandbox "state"
-  $RuntimeDir = Join-Path $Sandbox "runtime"
   [IO.Directory]::CreateDirectory($HomeDir) | Out-Null
   [IO.Directory]::CreateDirectory($StateDir) | Out-Null
-  [IO.Directory]::CreateDirectory($RuntimeDir) | Out-Null
   $env:APPDATA = Join-Path $HomeDir "AppData\Roaming"
   $env:LOCALAPPDATA = Join-Path $HomeDir "AppData\Local"
 
@@ -31,11 +29,9 @@ try {
   $env:LOBSTERAI_OTEL_CHECKSUM_PATH = $Checksum
   $env:LOBSTERAI_OTEL_VERSION = "latest"
 
-  $Entry = Join-Path $RuntimeDir "openclaw.mjs"
-  [IO.File]::WriteAllText($Entry, "// synthetic OpenClaw entry`n")
-  $FakeBin = Join-Path $RuntimeDir "LobsterAI-test.cmd"
   $Helper = Join-Path $Root "test\helpers\fake-openclaw-runtime.mjs"
-  [IO.File]::WriteAllText($FakeBin, "@echo off`r`nnode `"$Helper`" %*`r`n")
+  $FakeBin = (Get-Command node.exe -ErrorAction Stop).Source
+  $Entry = $Helper
 
   $Initial = @{
     plugins = @{
