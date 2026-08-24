@@ -7,7 +7,10 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packageJson = JSON.parse(await fs.readFile(path.join(root, "package.json"), "utf8"));
 const manifest = JSON.parse(await fs.readFile(path.join(root, "openclaw.plugin.json"), "utf8"));
+const changelog = await fs.readFile(path.join(root, "CHANGELOG.md"), "utf8");
 assert.equal(packageJson.name, manifest.id);
+assert.equal(packageJson.version, manifest.version);
+assert.ok(changelog.includes(`## ${packageJson.version} -`), "CHANGELOG release does not match package version");
 assert.equal(packageJson.openclaw.extensions[0], "./index.js");
 assert.equal(manifest.configSchema.properties.enabled.default, false);
 assert.equal(manifest.uiHints.xToken.sensitive, true);
@@ -35,7 +38,8 @@ for (const file of ["install.sh", "install-release.sh"]) {
 for (const required of [
   "README.md", "README_ZH.md", "LICENSE", "CHANGELOG.md", "docs/product-research.md",
   "docs/architecture.md", "docs/configuration.md", "docs/privacy.md", "docs/installation.md",
-  "test/fixtures/lobsterai-openclaw-v2026.6.1.json"
+  "test/fixtures/lobsterai-openclaw-v2026.6.1.json", "test/installer.test.js",
+  "test/windows-installer.ps1", ".github/workflows/release.yml"
 ]) {
   await fs.access(path.join(root, required));
 }

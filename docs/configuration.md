@@ -81,3 +81,7 @@ Environment headers use the standard comma-separated `key=value` form with perce
 | `debug` | false | success summaries without secret/payload logging |
 
 Retry interval, lock TTL, retention and state path have safe internal defaults and may be supplied in configuration for tests/advanced deployments even though LobsterAI does not expose them as primary UI fields.
+
+## Installer merge behavior
+
+Release installers update only explicitly supplied telemetry fields. Re-running an installer without `--x-token`/`-XToken`, for example, preserves the current token. Repeated `--header`/`-Header` and `--tag`/`-Tag` values merge into the existing maps instead of replacing unrelated keys. Use `--no-config` or `-NoConfig` to skip all private telemetry changes; plugin registration and the required read-only Hook trust policy are still verified.

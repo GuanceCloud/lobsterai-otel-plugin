@@ -20,3 +20,19 @@ jobs:
       - run: npm test
       - run: npm run check
       - run: npm audit --audit-level=moderate
+
+  windows-installer:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.19.0
+          cache: npm
+      - run: npm ci
+      - name: Test Windows PowerShell 5.1 installer
+        shell: powershell
+        run: ./test/windows-installer.ps1
+      - name: Test PowerShell 7 installer
+        shell: pwsh
+        run: ./test/windows-installer.ps1

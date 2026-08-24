@@ -14,13 +14,17 @@ If Git installation is unavailable in a future UI, download a release package an
 
 ## macOS/Linux release installer
 
-Download `install-release.sh` from a release, inspect it, then run:
+Download `install-release.sh` from a release, inspect it, then run the latest release or a fixed immutable version:
 
 ```bash
-bash install-release.sh
+bash install-release.sh latest --type gtrace \
+  --endpoint https://llm-openway.guance.com \
+  --x-token '<workspace-token>' --capture-content preview --enable
+
+bash install-release.sh v0.1.0 --no-config
 ```
 
-It downloads the latest package and checksum, verifies SHA-256, finds the LobsterAI bundled OpenClaw runtime, and installs into LobsterAI's OpenClaw state. It refuses to touch the default profile while LobsterAI is running. Linux installations with nonstandard paths can pass `--lobsterai-bin` and `--openclaw-entry`.
+It downloads the matching package, installer and checksums, verifies SHA-256, finds the LobsterAI bundled OpenClaw runtime, and installs into LobsterAI's OpenClaw state. It refuses to run while LobsterAI is active. Linux installations with nonstandard paths can pass `--lobsterai-bin`, `--openclaw-entry`, and `--state-dir`.
 
 The release installer also adds the plugin to the host allowlist and grants only the required conversation-read hook permission. It keeps prompt injection disabled.
 
@@ -36,10 +40,18 @@ Download and inspect `install-release.ps1`, then run it from PowerShell:
 
 ```powershell
 Set-ExecutionPolicy -Scope Process Bypass
-.\install-release.ps1
+.\install-release.ps1 -Version latest -Type gtrace `
+  -Endpoint https://llm-openway.guance.com `
+  -XToken '<workspace-token>' -CaptureContent preview -Enable
+
+.\install-release.ps1 -Version v0.1.0 -NoConfig
 ```
 
 Pass `-LobsterAiBin`, `-OpenClawEntry`, or `-StateDir` if LobsterAI uses nonstandard paths.
+
+Both installers accept equivalent endpoint, token, route, complete signal URL, header, resource attribute, capture, timeout, enable/disable and debug overrides. An upgrade only changes values explicitly supplied on that invocation; existing token, endpoint, enabled state, capture policy, debug value, headers, resource attributes and unknown future fields remain intact. `--no-config`/`-NoConfig` leaves private telemetry configuration unchanged while still installing and registering the plugin and its required Hook permission.
+
+Release assets include generic and versioned `.tar.gz` archives, per-file `.sha256` files, both platform installers, and `SHA256SUMS`.
 
 ## Verify
 

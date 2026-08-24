@@ -38,6 +38,15 @@ https://github.com/GuanceCloud/lobsterai-otel-plugin
 
 然后重启 LobsterAI Gateway。标准 OTLP Collector 请把 `profile` 改为 `otlp`。脚本安装、校验和回滚步骤见[安装文档](docs/installation.md)，完整字段见[配置文档](docs/configuration.md)。
 
+macOS/Linux 可使用带 SHA-256 校验的 Release 安装器：
+
+```bash
+curl -fsSLO https://github.com/GuanceCloud/lobsterai-otel-plugin/releases/latest/download/install-release.sh
+bash install-release.sh latest --type gtrace --endpoint https://llm-openway.guance.com --x-token '<workspace-token>' --enable
+```
+
+Windows 可从同一个 Release 下载 `install-release.ps1`，使用等价的 `-Version`、`-Type`、`-Endpoint`、`-XToken`、`-Enable` 参数。两个平台都支持 `latest` 和 `v0.1.0` 这类固定版本。
+
 注意：OpenClaw 会阻止未授权的第三方插件读取会话 Hook。Git/UI 安装后还需要设置 `plugins.entries.lobsterai-otel-plugin.hooks.allowConversationAccess=true`；发布安装器会自动完成，并保持 `allowPromptInjection=false`。完整配置见[配置文档](docs/configuration.md)。
 
 ## 开发与验收

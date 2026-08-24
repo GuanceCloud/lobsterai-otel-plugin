@@ -17,6 +17,9 @@
     "index.js",
     "src",
     "scripts",
+    "install.sh",
+    "install-release.sh",
+    "install-release.ps1",
     "openclaw.plugin.json",
     "README.md",
     "README_ZH.md",
@@ -26,6 +29,7 @@
   "scripts": {
     "check": "node scripts/check.mjs",
     "test": "node --test test/*.test.js",
+    "test:installers": "node --test test/installer.test.js",
     "pack:release": "node scripts/build-release.mjs"
   },
   "engines": {

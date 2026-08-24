@@ -12,3 +12,5 @@ All notable changes to this project are documented in this file.
 - Add root-span `session_create_at` and `session_updated_at` from native session lifecycle and transcript-header evidence.
 - Add root-only `usage_input_tokens` and `usage_output_tokens` aliases for current Agent Monitoring Session aggregation compatibility.
 - Add LobsterAI Git/release installation paths, checksums, tests, and research documentation.
+- Add checksum-verified, version-selectable macOS/Linux and Windows release installers with explicit-only configuration merging and isolated installer regression tests.
+- Add a tag-gated GitHub Release workflow with version alignment, audit, Windows installer validation, versioned/latest archives, sidecar checksums, and `SHA256SUMS`.
