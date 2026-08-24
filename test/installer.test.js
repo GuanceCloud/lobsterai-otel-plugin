@@ -93,7 +93,7 @@ test("fresh install registers hooks and applies explicit GTrace configuration", 
   const sandbox = await setupState("fresh", { plugins: { allow: ["unrelated"], entries: { unrelated: { enabled: true } } } });
   const secret = "synthetic-test-token";
   const result = runInstaller(sandbox, [
-    "--expected-version", "0.1.0", "--type", "gtrace", "--endpoint", "https://example.invalid",
+    "--expected-version", "0.1.1", "--type", "gtrace", "--endpoint", "https://example.invalid",
     "--x-token", secret, "--tag", "deployment.environment.name=test", "--header", "X-Test=value",
     "--capture-content", "preview", "--max-chars", "2048", "--timeout-ms", "5000", "--enable", "--debug"
   ]);
@@ -189,7 +189,7 @@ test("fixed version mismatch fails before invoking the host CLI", async () => {
 });
 
 test("release wrapper verifies downloads and supports fixed and latest versions", async () => {
-  for (const version of ["v0.1.0", "latest"]) {
+  for (const version of ["v0.1.1", "latest"]) {
     const sandbox = await setupState(`release-${version.replaceAll(".", "-")}`);
     const result = runReleaseInstaller(sandbox, version, ["--no-config"]);
     assert.equal(result.status, 0, result.stderr);

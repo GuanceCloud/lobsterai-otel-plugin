@@ -1,6 +1,6 @@
 {
   "id": "lobsterai-otel-plugin",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "name": "LobsterAI OpenTelemetry",
   "description": "Export terminal LobsterAI agent turns as GTrace-compatible OTLP traces and metrics.",
   "activation": {

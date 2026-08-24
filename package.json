@@ -1,6 +1,6 @@
 {
   "name": "lobsterai-otel-plugin",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "GTrace-compatible OpenTelemetry traces and metrics for LobsterAI.",
   "type": "module",
   "private": false,

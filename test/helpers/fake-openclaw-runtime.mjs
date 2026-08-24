@@ -51,6 +51,7 @@ await fs.appendFile(callsPath, `${JSON.stringify(args)}\n`);
 const config = await readConfig();
 
 if (args[0] === "plugins" && args[1] === "install") {
+  await fs.access(args[2]);
   config.fakeInstalledPackage = args[2];
   await writeConfig(config);
 } else if (args[0] === "plugins" && args[1] === "inspect") {

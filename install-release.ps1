@@ -117,13 +117,20 @@ try {
     param([string[]]$Arguments)
     $PreviousErrorActionPreference = $ErrorActionPreference
     $ExitCode = 0
+    $CommandOutput = @()
     try {
       $ErrorActionPreference = "Continue"
-      & $LobsterAiBin $OpenClawEntry @Arguments
+      # PowerShell does not wait for Windows GUI-subsystem executables unless
+      # their output participates in the pipeline. LobsterAI.exe is such an
+      # executable even when ELECTRON_RUN_AS_NODE is enabled. Consume its
+      # output before reading the exit code so temporary install inputs remain
+      # available until OpenClaw has actually finished using them.
+      $CommandOutput = @(& $LobsterAiBin $OpenClawEntry @Arguments)
       $ExitCode = $LASTEXITCODE
     } finally {
       $ErrorActionPreference = $PreviousErrorActionPreference
     }
+    if ($CommandOutput.Count -gt 0) { $CommandOutput | Write-Output }
     if ($ExitCode -ne 0) { throw "OpenClaw command failed with exit code $ExitCode." }
   }
   function Invoke-OpenClawPatch {

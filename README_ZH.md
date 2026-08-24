@@ -45,7 +45,7 @@ curl -fsSLO https://github.com/GuanceCloud/lobsterai-otel-plugin/releases/latest
 bash install-release.sh latest --type gtrace --endpoint https://llm-openway.guance.com --x-token '<workspace-token>' --enable
 ```
 
-Windows 可从同一个 Release 下载 `install-release.ps1`，使用等价的 `-Version`、`-Type`、`-Endpoint`、`-XToken`、`-Enable` 参数。两个平台都支持 `latest` 和 `v0.1.0` 这类固定版本。
+Windows 可从同一个 Release 下载 `install-release.ps1`，使用等价的 `-Version`、`-Type`、`-Endpoint`、`-XToken`、`-Enable` 参数。两个平台都支持 `latest` 和 `v0.1.1` 这类固定版本。
 
 注意：OpenClaw 会阻止未授权的第三方插件读取会话 Hook。Git/UI 安装后还需要设置 `plugins.entries.lobsterai-otel-plugin.hooks.allowConversationAccess=true`；发布安装器会自动完成，并保持 `allowPromptInjection=false`。完整配置见[配置文档](docs/configuration.md)。
 

@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.1.1 - 2026-08-24
+
+- Wait synchronously for LobsterAI's Windows GUI-subsystem executable before reading the OpenClaw exit code or deleting temporary installer inputs.
+- Make the Windows regression runtime reject an archive that no longer exists and exercise the installer through a delayed GUI executable shim.
+- Prevent a failed asynchronous plugin copy from being reported as a successful installation.
+
 ## 0.1.0 - 2026-08-24
 
 - Add LobsterAI/OpenClaw native lifecycle instrumentation.

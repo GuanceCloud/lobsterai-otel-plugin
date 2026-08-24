@@ -18,7 +18,11 @@ jobs:
           node-version: 22.19.0
           cache: npm
       - run: npm ci
-      - shell: pwsh
+      - name: Test Windows PowerShell 5.1 installer
+        shell: powershell
+        run: ./test/windows-installer.ps1
+      - name: Test PowerShell 7 installer
+        shell: pwsh
         run: ./test/windows-installer.ps1
 
   publish:

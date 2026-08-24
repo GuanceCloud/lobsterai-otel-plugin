@@ -21,7 +21,7 @@ bash install-release.sh latest --type gtrace \
   --endpoint https://llm-openway.guance.com \
   --x-token '<workspace-token>' --capture-content preview --enable
 
-bash install-release.sh v0.1.0 --no-config
+bash install-release.sh v0.1.1 --no-config
 ```
 
 It downloads the matching package, installer and checksums, verifies SHA-256, finds the LobsterAI bundled OpenClaw runtime, and installs into LobsterAI's OpenClaw state. It refuses to run while LobsterAI is active. Linux installations with nonstandard paths can pass `--lobsterai-bin`, `--openclaw-entry`, and `--state-dir`.
@@ -44,8 +44,20 @@ Set-ExecutionPolicy -Scope Process Bypass
   -Endpoint https://llm-openway.guance.com `
   -XToken '<workspace-token>' -CaptureContent preview -Enable
 
-.\install-release.ps1 -Version v0.1.0 -NoConfig
+.\install-release.ps1 -Version v0.1.1 -NoConfig
 ```
+
+From `cmd.exe`, download the same installer and invoke Windows PowerShell explicitly. CMD uses `^` rather than PowerShell's backtick for line continuation:
+
+```bat
+curl.exe -fL "https://github.com/GuanceCloud/lobsterai-otel-plugin/releases/latest/download/install-release.ps1" -o "%TEMP%\install-release.ps1"
+powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "%TEMP%\install-release.ps1" ^
+  -Version latest -Type gtrace ^
+  -Endpoint "https://llm-openway.guance.com" ^
+  -XToken "<workspace-token>" -CaptureContent preview -Enable
+```
+
+The release gate runs the installer under both built-in Windows PowerShell 5.1 (`powershell.exe`) and PowerShell 7 (`pwsh.exe`). A machine-enforced `MachinePolicy`, `UserPolicy`, AppLocker, or WDAC rule can still require administrator approval or a signed script.
 
 Pass `-LobsterAiBin`, `-OpenClawEntry`, or `-StateDir` if LobsterAI uses nonstandard paths.
 

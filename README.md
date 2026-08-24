@@ -47,7 +47,7 @@ curl -fsSLO https://github.com/GuanceCloud/lobsterai-otel-plugin/releases/latest
 bash install-release.sh latest --type gtrace --endpoint https://llm-openway.guance.com --x-token '<workspace-token>' --enable
 ```
 
-Windows PowerShell users can download `install-release.ps1` from the same Release and run it with equivalent `-Version`, `-Type`, `-Endpoint`, `-XToken`, and `-Enable` parameters. Fixed versions such as `v0.1.0` are supported on both platforms.
+Windows PowerShell users can download `install-release.ps1` from the same Release and run it with equivalent `-Version`, `-Type`, `-Endpoint`, `-XToken`, and `-Enable` parameters. Fixed versions such as `v0.1.1` are supported on both platforms.
 
 OpenClaw blocks raw conversation hooks from untrusted third-party plugins. A Git/UI install must also set `plugins.entries.lobsterai-otel-plugin.hooks.allowConversationAccess=true`; the release installers do this automatically while keeping `allowPromptInjection=false`.
 
