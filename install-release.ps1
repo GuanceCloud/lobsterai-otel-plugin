@@ -114,24 +114,27 @@ try {
   $env:ELECTRON_RUN_AS_NODE = "1"
   $env:OPENCLAW_STATE_DIR = $StateDir
   function Invoke-OpenClaw {
-    param([string[]]$Arguments, [string]$StandardInput)
+    param([string[]]$Arguments)
     $PreviousErrorActionPreference = $ErrorActionPreference
-    $PreviousOutputEncoding = $OutputEncoding
     $ExitCode = 0
     try {
       $ErrorActionPreference = "Continue"
-      if ($PSBoundParameters.ContainsKey("StandardInput")) {
-        $OutputEncoding = [System.Text.UTF8Encoding]::new($false)
-        $StandardInput | & $LobsterAiBin $OpenClawEntry @Arguments
-      } else {
-        & $LobsterAiBin $OpenClawEntry @Arguments
-      }
+      & $LobsterAiBin $OpenClawEntry @Arguments
       $ExitCode = $LASTEXITCODE
     } finally {
       $ErrorActionPreference = $PreviousErrorActionPreference
-      $OutputEncoding = $PreviousOutputEncoding
     }
     if ($ExitCode -ne 0) { throw "OpenClaw command failed with exit code $ExitCode." }
+  }
+  function Invoke-OpenClawPatch {
+    param([string]$Json)
+    $PatchPath = Join-Path $TempRoot ("openclaw-patch-" + [guid]::NewGuid().ToString("N") + ".json")
+    try {
+      [IO.File]::WriteAllText($PatchPath, $Json, [System.Text.UTF8Encoding]::new($false))
+      Invoke-OpenClaw -Arguments @("config", "patch", "--file", $PatchPath)
+    } finally {
+      Remove-Item -LiteralPath $PatchPath -Force -ErrorAction SilentlyContinue
+    }
   }
 
   Write-Host "Installing lobsterai-otel-plugin v$($PackageMetadata.version) into the selected LobsterAI OpenClaw state directory."
@@ -153,7 +156,7 @@ try {
     }
   }
   $HostPatchJson = ConvertTo-Json -Compress -Depth 20 -InputObject $HostPatch
-  Invoke-OpenClaw -Arguments @("config", "patch", "--stdin") -StandardInput $HostPatchJson | Out-Null
+  Invoke-OpenClawPatch -Json $HostPatchJson | Out-Null
   Invoke-OpenClaw -Arguments @("plugins", "inspect", $PluginId, "--json") | Out-Null
 
   if (-not $NoConfig) {
@@ -185,7 +188,7 @@ try {
     if ($Config.Count -gt 0) {
       $Patch = @{ plugins = @{ entries = @{ $PluginId = @{ config = $Config } } } }
       $PatchJson = ConvertTo-Json -Compress -Depth 20 -InputObject $Patch
-      Invoke-OpenClaw -Arguments @("config", "patch", "--stdin") -StandardInput $PatchJson | Out-Null
+      Invoke-OpenClawPatch -Json $PatchJson | Out-Null
     }
   }
 

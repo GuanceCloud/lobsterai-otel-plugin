@@ -64,8 +64,10 @@ if (args[0] === "plugins" && args[1] === "install") {
   const value = JSON.parse(args[3]);
   setAtPath(config, args[2], value, args.includes("--merge"));
   await writeConfig(config);
-} else if (args[0] === "config" && args[1] === "patch" && args.includes("--stdin")) {
-  const patch = JSON.parse(await stdin());
+} else if (args[0] === "config" && args[1] === "patch" && (args.includes("--stdin") || args.includes("--file"))) {
+  const fileIndex = args.indexOf("--file");
+  const source = fileIndex >= 0 ? await fs.readFile(args[fileIndex + 1], "utf8") : await stdin();
+  const patch = JSON.parse(source);
   await writeConfig(deepMerge(config, patch));
 } else {
   process.stderr.write(`unsupported fake OpenClaw command: ${args.join(" ")}\n`);
