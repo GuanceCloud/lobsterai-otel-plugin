@@ -115,12 +115,23 @@ try {
   $env:OPENCLAW_STATE_DIR = $StateDir
   function Invoke-OpenClaw {
     param([string[]]$Arguments, [string]$StandardInput)
-    if ($PSBoundParameters.ContainsKey("StandardInput")) {
-      $StandardInput | & $LobsterAiBin $OpenClawEntry @Arguments
-    } else {
-      & $LobsterAiBin $OpenClawEntry @Arguments
+    $PreviousErrorActionPreference = $ErrorActionPreference
+    $PreviousOutputEncoding = $OutputEncoding
+    $ExitCode = 0
+    try {
+      $ErrorActionPreference = "Continue"
+      if ($PSBoundParameters.ContainsKey("StandardInput")) {
+        $OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+        $StandardInput | & $LobsterAiBin $OpenClawEntry @Arguments
+      } else {
+        & $LobsterAiBin $OpenClawEntry @Arguments
+      }
+      $ExitCode = $LASTEXITCODE
+    } finally {
+      $ErrorActionPreference = $PreviousErrorActionPreference
+      $OutputEncoding = $PreviousOutputEncoding
     }
-    if ($LASTEXITCODE -ne 0) { throw "OpenClaw command failed with exit code $LASTEXITCODE." }
+    if ($ExitCode -ne 0) { throw "OpenClaw command failed with exit code $ExitCode." }
   }
 
   Write-Host "Installing lobsterai-otel-plugin v$($PackageMetadata.version) into the selected LobsterAI OpenClaw state directory."
